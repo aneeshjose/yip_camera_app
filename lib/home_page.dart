@@ -1,4 +1,6 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:point_plotter/plotted_ponts.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -7,19 +9,24 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   double imageHeight = 1280, imageWidth = 960;
+
   double itemLeft = 100.0, itemTop = 100.0;
   double topPadding, leftPadding;
+
+  Map<num, Map<String, num>> _coordinates;
 
   @override
   void initState() {
     super.initState();
-    _fetchAndPlotPoints();
+    coordinates();
   }
 
   @override
   Widget build(BuildContext context) {
     topPadding = MediaQuery.of(context).padding.top;
     leftPadding = MediaQuery.of(context).padding.left;
+    // print(topPadding);
+    // print(leftPadding);
 
     return Scaffold(
       body: SafeArea(
@@ -28,47 +35,53 @@ class _HomePageState extends State<HomePage> {
             num widthRatio = constraints.maxWidth / imageWidth;
             num containerHeight = widthRatio * imageHeight;
 
-            return Stack(
+            return ListView(
               children: [
-                Container(
-                  width: constraints.maxWidth,
-                  height: containerHeight,
-                  color: Colors.yellow[200],
-                ),
-                Positioned(
-                  // left: 242.1,
-                  // top: 370.5,
-                  left: itemLeft,
-                  top: itemTop,
-                  child: Draggable(
-                    onDragEnd: (DraggableDetails offset) {
-                      setState(() {
-                        itemLeft = offset.offset.dx - leftPadding;
-                        itemTop = offset.offset.dy - topPadding;
-                        if (itemTop > containerHeight) {
-                          itemTop = containerHeight - topPadding;
-                        }
-                      });
-                      print(itemTop);
-                    },
-                    feedback: Container(
-                      height: 10,
-                      width: 10,
-                      color: Colors.green,
-                    ),
-                    childWhenDragging: Container(),
-                    child: Opacity(
-                      opacity: 1,
-                      child: Center(
-                        child: Container(
-                          width: 10,
-                          height: 10,
-                          color: Colors.black,
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Stack(
+                      children: [
+                        Container(
+                          width: constraints.maxWidth,
+                          height: containerHeight,
+                          color: Colors.yellow[200],
+                          child: CachedNetworkImage(
+                            imageUrl:
+                                "https://storage.googleapis.com/finalyearproject-312006.appspot.com/aneeshjose/sample3.jpg",
+                            width: constraints.maxWidth,
+                          ),
                         ),
-                      ),
+                        if (_coordinates != null)
+                          Container(
+                            width: constraints.maxWidth,
+                            height: containerHeight,
+                            child: PlottedPoints(
+                              coordinates: _coordinates,
+                              leftPadding: leftPadding,
+                              topPadding: topPadding,
+                              screenRatio: widthRatio,
+                              onDragEnd: (index, x, y) {
+                                setState(() {
+                                  _coordinates[index]['x'] = x;
+                                  _coordinates[index]['y'] = y;
+                                });
+                              },
+                            ),
+                          ),
+                      ],
                     ),
-                  ),
-                )
+                    // Padding(
+                    //   padding: const EdgeInsets.fromLTRB(20, 10, 10, 10),
+                    //   child: Container(
+                    //     width: 200,
+                    //     height: 200,
+                    //     color: Colors.green,
+                    //     child: ClipOval(clipper: ,),
+                    //   ),
+                    // )
+                  ],
+                ),
               ],
             );
           },
@@ -77,44 +90,40 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Future<void> _fetchAndPlotPoints() async {
-    Map<num, Map<String, num>> _coordinates = await coordinates();
-  }
-
-  Future<Map<num, Map<String, num>>> coordinates() async {
-    return Future.delayed(Duration(seconds: 1), () {
-      return {
-        1: {'x': 363, 'y': 312},
-        2: {'x': 429, 'y': 312},
-        3: {'x': 359, 'y': 354},
-        4: {'x': 359, 'y': 452},
-        5: {'x': 229, 'y': 345},
-        6: {'x': 200, 'y': 395},
-        7: {'x': 215, 'y': 256},
-        8: {'x': 179, 'y': 256},
-        9: {'x': 524, 'y': 364},
-        10: {'x': 524, 'y': 462},
-        11: {'x': 557, 'y': 382},
-        12: {'x': 574, 'y': 433},
-        13: {'x': 592, 'y': 305},
-        14: {'x': 615, 'y': 305},
-        15: {'x': 309, 'y': 588},
-        16: {'x': 390, 'y': 633},
-        17: {'x': 352, 'y': 796},
-        18: {'x': 310, 'y': 796},
-        19: {'x': 326, 'y': 999},
-        20: {'x': 310, 'y': 999},
-        21: {'x': 449, 'y': 1012},
-        22: {'x': 433, 'y': 1012},
-        23: {'x': 465, 'y': 794},
-        24: {'x': 415, 'y': 794},
-        25: {'x': 390, 'y': 633},
-        26: {'x': 458, 'y': 588},
-        27: {'x': 359, 'y': 354},
-        28: {'x': 524, 'y': 364},
-        29: {'x': 297, 'y': 633},
-        30: {'x': 488, 'y': 633}
-      };
+  void coordinates() async {
+    Future.delayed(Duration(seconds: 1), () {
+      setState(() => _coordinates = {
+            1: {'x': 363, 'y': 312},
+            2: {'x': 429, 'y': 312},
+            3: {'x': 359, 'y': 354},
+            4: {'x': 359, 'y': 452},
+            5: {'x': 229, 'y': 345},
+            6: {'x': 200, 'y': 395},
+            7: {'x': 215, 'y': 256},
+            8: {'x': 179, 'y': 256},
+            9: {'x': 524, 'y': 364},
+            10: {'x': 524, 'y': 462},
+            11: {'x': 557, 'y': 382},
+            12: {'x': 574, 'y': 433},
+            13: {'x': 592, 'y': 305},
+            14: {'x': 615, 'y': 305},
+            15: {'x': 309, 'y': 588},
+            16: {'x': 390, 'y': 633},
+            17: {'x': 352, 'y': 796},
+            18: {'x': 310, 'y': 796},
+            19: {'x': 326, 'y': 999},
+            20: {'x': 310, 'y': 999},
+            21: {'x': 449, 'y': 1012},
+            22: {'x': 433, 'y': 1012},
+            23: {'x': 415, 'y': 794},
+            24: {'x': 465, 'y': 794},
+            25: {'x': 390, 'y': 633},
+            26: {'x': 458, 'y': 588},
+            27: {'x': 359, 'y': 384},
+            28: {'x': 524, 'y': 394},
+            29: {'x': 297, 'y': 633},
+            30: {'x': 488, 'y': 633}
+          });
     });
   }
 
