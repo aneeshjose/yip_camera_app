@@ -82,15 +82,6 @@ class _HomePageState extends State<HomePage> {
                               )),
                       ],
                     ),
-                    // Padding(
-                    //   padding: const EdgeInsets.fromLTRB(20, 10, 10, 10),
-                    //   child: Container(
-                    //     width: 200,
-                    //     height: 200,
-                    //     color: Colors.green,
-                    //     child: ClipOval(clipper: ,),
-                    //   ),
-                    // )
                   ],
                 ),
               ],
