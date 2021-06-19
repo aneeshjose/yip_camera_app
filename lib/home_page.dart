@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:point_plotter/plotted_lines.dart';
 import 'package:point_plotter/plotted_points.dart';
@@ -15,6 +16,8 @@ class _HomePageState extends State<HomePage> {
   double topPadding, leftPadding;
 
   Map<num, Map<String, num>> _coordinates;
+  int _clickedIndex = 1000;
+  Offset _startOffset;
 
   @override
   void initState() {
@@ -36,54 +39,70 @@ class _HomePageState extends State<HomePage> {
             num widthRatio = constraints.maxWidth / imageWidth;
             num containerHeight = widthRatio * imageHeight;
 
-            return ListView(
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                Stack(
                   children: [
-                    Stack(
-                      children: [
-                        Container(
+                    Container(
+                      width: constraints.maxWidth,
+                      height: containerHeight,
+                      color: Colors.yellow[200],
+                      child: CachedNetworkImage(
+                        imageUrl:
+                            "https://storage.googleapis.com/finalyearproject-312006.appspot.com/aneeshjose/sample3.jpg",
+                        width: constraints.maxWidth,
+                      ),
+                    ),
+                    if (_coordinates != null)
+                      Container(
+                        width: constraints.maxWidth,
+                        height: containerHeight,
+                        child: PlottedPoints(
+                          onClick: (index) =>
+                              setState(() => _clickedIndex = index),
+                          coordinates: _coordinates,
+                          leftPadding: leftPadding,
+                          topPadding: topPadding,
+                          screenRatio: widthRatio,
+                          clickedIndex: _clickedIndex,
+                        ),
+                      ),
+                    if (_coordinates != null)
+                      Container(
                           width: constraints.maxWidth,
                           height: containerHeight,
-                          color: Colors.yellow[200],
-                          child: CachedNetworkImage(
-                            imageUrl:
-                                "https://storage.googleapis.com/finalyearproject-312006.appspot.com/aneeshjose/sample3.jpg",
-                            width: constraints.maxWidth,
-                          ),
-                        ),
-                        if (_coordinates != null)
-                          Container(
-                            width: constraints.maxWidth,
-                            height: containerHeight,
-                            child: PlottedPoints(
-                              coordinates: _coordinates,
-                              leftPadding: leftPadding,
-                              topPadding: topPadding,
-                              screenRatio: widthRatio,
-                              onDragEnd: (index, x, y) {
-                                setState(() {
-                                  _coordinates[index]['x'] = x;
-                                  _coordinates[index]['y'] = y;
-                                });
-                              },
-                            ),
-                          ),
-                        if (_coordinates != null)
-                          Container(
-                              width: constraints.maxWidth,
-                              height: containerHeight,
-                              child: PlottedLines(
-                                coordinates: _coordinates,
-                                leftPadding: leftPadding,
-                                screenRatio: widthRatio,
-                                topPadding: topPadding,
-                              )),
-                      ],
-                    ),
+                          child: PlottedLines(
+                            coordinates: _coordinates,
+                            leftPadding: leftPadding,
+                            screenRatio: widthRatio,
+                            topPadding: topPadding,
+                          )),
                   ],
                 ),
+                SizedBox(height: 20),
+                Center(
+                  child: GestureDetector(
+                    onPanStart: (details) =>
+                        _startOffset = details.globalPosition,
+                    onPanUpdate: (details) => setState(() {
+                      _coordinates[_clickedIndex]['x'] +=
+                          (details.globalPosition.dx - _startOffset.dx) / 150;
+                      _coordinates[_clickedIndex]['y'] +=
+                          (details.globalPosition.dy - _startOffset.dy) / 150;
+                    }),
+                    child: Container(
+                      width: constraints.maxWidth * .90,
+                      height: 200,
+                      color: Colors.blue[200],
+                      child: Center(
+                        child: Text(
+                          'Select any point and Swipe here to move it',
+                        ),
+                      ),
+                    ),
+                  ),
+                )
               ],
             );
           },

@@ -20,7 +20,7 @@ class CustomLine extends CustomPainter {
         endOffset[i],
         Paint()
           ..shader = gradient.createShader(rect)
-          ..strokeWidth = 2.0,
+          ..strokeWidth = 1.0,
       );
     }
   }
