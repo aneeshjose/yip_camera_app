@@ -34,7 +34,7 @@ class PlottedPoints extends StatelessWidget {
                     index + 1,
                     (offset.offset.dx + 15 - screenRatio) / screenRatio -
                         leftPadding,
-                    (offset.offset.dy - screenRatio) / screenRatio -
+                    (offset.offset.dy - screenRatio + 5) / screenRatio -
                         topPadding);
               } catch (e) {}
             },
