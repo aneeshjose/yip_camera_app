@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 
 class PlottedPoints extends StatelessWidget {
-  final Map<num, Map<String, num>> coordinates;
+  final Map<num, List<num>> coordinates;
   final double leftPadding, topPadding;
   final Function(int) onClick;
   final int clickedIndex;
   final num screenRatio;
+  final num heightRatio;
 
   const PlottedPoints({
     Key key,
@@ -15,6 +16,7 @@ class PlottedPoints extends StatelessWidget {
     this.screenRatio,
     this.onClick,
     this.clickedIndex,
+    this.heightRatio,
   }) : super(key: key);
   @override
   Widget build(BuildContext context) {
@@ -25,8 +27,10 @@ class PlottedPoints extends StatelessWidget {
             ? Positioned(
                 // left: coordinates[index + 1]['x'] * screenRatio - leftPadding - 15,
                 // top: coordinates[index + 1]['y'] * screenRatio - topPadding,
-                left: (coordinates[index + 1]['x'] * screenRatio) - 15,
-                top: (coordinates[index + 1]['y'] * screenRatio) - 15,
+                left: (coordinates[index + 1][0] * screenRatio) -
+                    15 +
+                    leftPadding,
+                top: (coordinates[index + 1][1] * heightRatio) - 15,
                 child: GestureDetector(
                   onTap: () => onClick(index + 1),
                   child: ClipOval(
@@ -135,8 +139,12 @@ class PlottedPoints extends StatelessWidget {
             : Positioned(
                 // left: coordinates[index + 1]['x'] * screenRatio - leftPadding - 15,
                 // top: coordinates[index + 1]['y'] * screenRatio - topPadding,
-                left: (coordinates[index + 1]['x'] * screenRatio) - 3 / 2,
-                top: (coordinates[index + 1]['y'] * screenRatio) - 3 / 2,
+                left: (coordinates[index + 1][0] * screenRatio) -
+                    3 / 2 +
+                    leftPadding,
+                top: (coordinates[index + 1][1] * screenRatio) -
+                    3 / 2 +
+                    topPadding,
                 child: GestureDetector(
                   onTap: () => onClick(index + 1),
                   child: ClipOval(

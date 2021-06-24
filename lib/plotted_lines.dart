@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:point_plotter/custom_line.dart';
 
 class PlottedLines extends StatelessWidget {
-  final Map<num, Map<String, num>> coordinates;
+  final Map<num, List<num>> coordinates;
   final double leftPadding, topPadding;
-  final num screenRatio;
+  final num screenRatio, heightRatio;
   static Map<int, List<int>> connectionMap = {
     1: [2, 3],
     2: [1, 9],
@@ -21,7 +21,7 @@ class PlottedLines extends StatelessWidget {
     13: [11, 14],
     14: [12, 13],
     15: [26, 27, 29],
-    16: [18, 29, 25],
+    16: [18, 29],
     17: [29, 18, 19],
     18: [16, 17, 20],
     19: [17, 20],
@@ -30,7 +30,7 @@ class PlottedLines extends StatelessWidget {
     22: [21, 24],
     23: [21, 24, 25],
     24: [22, 23, 30],
-    25: [23, 30, 16],
+    25: [23, 30],
     26: [28, 15, 30],
     27: [4, 15, 28],
     28: [10, 27, 26],
@@ -44,16 +44,18 @@ class PlottedLines extends StatelessWidget {
     this.topPadding,
     this.screenRatio,
     this.coordinates,
+    this.heightRatio,
   }) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Stack(
         children: List.generate(30, (index) {
-      Offset startOffset = Offset(coordinates[index + 1]['x'] * screenRatio,
-          coordinates[index + 1]['y'] * screenRatio);
+      Offset startOffset = Offset(
+          coordinates[index + 1][0] * screenRatio + leftPadding,
+          coordinates[index + 1][1] * heightRatio);
       List<Offset> endOffsets = connections(index + 1)
-          .map((e) => Offset(coordinates[e]['x'] * screenRatio,
-              coordinates[e]['y'] * screenRatio))
+          .map((e) => Offset(coordinates[e][0] * screenRatio + leftPadding,
+              coordinates[e][1] * heightRatio))
           .toList();
       return CustomPaint(
         painter: CustomLine(
