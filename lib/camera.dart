@@ -65,7 +65,7 @@ class _CameraPageState extends State<CameraPage> {
                       child: Opacity(
                         opacity: 0.7,
                         child: Container(
-                          color: Colors.grey,
+                          color: Colors.grey[800],
                         ),
                       ),
                     ),
@@ -232,20 +232,39 @@ class MyCustomClipper extends CustomClipper<Path> {
   Path getClip(Size size) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
-    Path border = Path()..addRect(Rect.fromLTRB(0, 0, width / 20.5, height));
+
+    Path border;
+
+    // left border
+    border = Path()..addRect(Rect.fromLTRB(0, 0, width / 20.5, height));
+    // right border
     border.addPath(border, Offset(width / 1.05, 0));
 
     Path leftLeg = Path()
       ..addRect(Rect.fromLTRB(width / 41, height / 3.5, width / 4.1, height));
 
+    // border at left hand bottom
     border.addPath(leftLeg, Offset(width / 42, 0));
+    // border at right hand bottom
     border.addPath(leftLeg, Offset(width - width / 3.43, 0));
 
     Path leftHand = Path()
       ..addRect(Rect.fromLTRB(width / 40, 0, width / 4.1, height / 4.5));
 
+    // left hand
     border.addPath(leftHand, Offset(width / 7, 0));
+
+    // right hand
     border.addPath(leftHand, Offset(width / 1.708, 0));
+
+    Path hatCut = Path()
+      ..addPolygon([
+        Offset(width / 2 - width / 8, 0),
+        Offset(width / 2 + width / 9, 0),
+        Offset(width / 2 + width / 9, height / 9),
+        Offset(width / 2 - width / 8, height / 9),
+      ], true);
+    border.addPath(hatCut, Offset(0, 0));
 
     Path centerCut = Path()
       ..addPolygon([
@@ -253,8 +272,8 @@ class MyCustomClipper extends CustomClipper<Path> {
         Offset(width / 2 + width / 9, height / 2),
         Offset(width / 2, height / 2 - height / 2.5),
       ], true);
-
     border.addPath(centerCut, Offset(0, height / 2.3));
+
     return border;
   }
 

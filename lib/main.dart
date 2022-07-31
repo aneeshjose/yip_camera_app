@@ -2,9 +2,7 @@ import 'package:camera/camera.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:point_plotter/camera.dart';
 import 'package:point_plotter/camera_utils.dart';
-import 'package:point_plotter/drawer.dart';
 import 'package:point_plotter/homepage.dart';
 import 'package:point_plotter/login.dart';
 

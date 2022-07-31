@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:point_plotter/homepage.dart';
 import 'package:point_plotter/login.dart';
-import 'package:point_plotter/main.dart';
 
 class SignUp extends StatefulWidget {
   @override
