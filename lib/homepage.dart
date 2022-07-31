@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:point_plotter/camera.dart';
 import 'package:point_plotter/coordinate_adjust.dart';
 import 'package:point_plotter/drawer.dart';
+import 'package:point_plotter/right_side_camera.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -35,7 +36,7 @@ class _HomePageState extends State<HomePage> {
         onPressed: () => Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => CameraPage(),
+            builder: (context) => RightCamera(),
           ),
         ),
       ),

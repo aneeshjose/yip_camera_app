@@ -11,6 +11,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:http/http.dart';
 import 'package:path/path.dart';
 import 'package:point_plotter/camera_utils.dart';
+import 'package:point_plotter/right_side_camera.dart';
 
 class CameraPage extends StatefulWidget {
   @override
@@ -189,38 +190,45 @@ class _CameraPageState extends State<CameraPage> {
     });
     // downloadUrl =
     //     'https://firebasestorage.googleapis.com/v0/b/size-me.appspot.com/o/sample3.jpg?alt=media&token=3ad2fd3b-a70f-409d-93c0-469a0f7b366c';
-    Response resp = await post(Uri.parse('http://35.193.86.253:5000'),
-        headers: {'Content-type': 'applications/json'},
-        body: json.encode({
-          'url': downloadUrl,
-        }));
-    Map respMap = json.decode(resp.body);
-    num totalPixels = respMap['totalpixels'];
-    int width = respMap['width'];
-    int height = respMap['height'];
-    respMap.removeWhere((key, value) => key == 'totalpixels');
-    respMap.removeWhere((key, value) => key == 'width');
-    respMap.removeWhere((key, value) => key == 'height');
-    await FirebaseFirestore.instance.collection('coordinates').add({
-      'uid': FirebaseAuth.instance.currentUser.uid,
-      'url': downloadUrl,
-      'height_pixels': totalPixels,
-      'coordinates': respMap,
-      'width': double.parse(width.toString()),
-      'height': double.parse(height.toString()),
-    });
-    print(respMap);
+    // Response resp = await post(Uri.parse('http://35.193.86.253:5000'),
+    //     headers: {'Content-type': 'applications/json'},
+    //     body: json.encode({
+    //       'url': downloadUrl,
+    //     }));
+    // Map respMap = json.decode(resp.body);
+    // num totalPixels = respMap['totalpixels'];
+    // int width = respMap['width'];
+    // int height = respMap['height'];
+    // respMap.removeWhere((key, value) => key == 'totalpixels');
+    // respMap.removeWhere((key, value) => key == 'width');
+    // respMap.removeWhere((key, value) => key == 'height');
+    // await FirebaseFirestore.instance.collection('coordinates').add({
+    //   'uid': FirebaseAuth.instance.currentUser.uid,
+    //   'url': downloadUrl,
+    //   'height_pixels': totalPixels,
+    //   'coordinates': respMap,
+    //   'width': double.parse(width.toString()),
+    //   'height': double.parse(height.toString()),
+    // });
+    // print(respMap);
+
+    // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    //   content: Text(
+    //     "Uploaded successfully. The results will be sent to your homepage shortly",
+    //   ),
+    // ));
 
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(
-        "Uploaded successfully. The results will be sent to your homepage shortly",
+        "Uploaded successfully. Now turn to right",
       ),
     ));
 
     setState(() {
       _fileUploading = false;
     });
-    Navigator.pop(context);
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => RightCamera()));
   }
 }
 
