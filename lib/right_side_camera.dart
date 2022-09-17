@@ -69,6 +69,18 @@ class _RightCameraState extends State<RightCamera> {
                       ),
                     ),
                   ),
+                  // Container(
+                  //   color: Colors.black,
+                  //   child: ClipPath(
+                  //     clipper: MyCustomClipper(context),
+                  //     child: Opacity(
+                  //       opacity: 0.7,
+                  //       child: Container(
+                  //         color: Colors.grey[800],
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
                   if (_fileUploading)
                     Center(
                       child: CircularProgressIndicator(),
@@ -206,53 +218,40 @@ class MyCustomClipper extends CustomClipper<Path> {
 
   @override
   Path getClip(Size size) {
-    double width = MediaQuery.of(context).size.width;
-    double height = MediaQuery.of(context).size.height;
-
     Path border;
 
     // left border
-    border = Path()..addRect(Rect.fromLTRB(0, 0, width / 20.5, height));
+    border = Path()
+      ..addRect(Rect.fromLTRB(
+          0, 0, getWidthFromPercentage(5), getHeightFromPercentage(100)));
     // right border
-    border.addPath(border, Offset(width / 1.05, 0));
+    border.addPath(border, Offset(getWidthFromPercentage(95), 0));
 
-    Path leftLeg = Path()
-      ..addRect(Rect.fromLTRB(width / 41, height / 3.5, width / 4.1, height));
+    Path spaceBeforeHead = Path()
+      ..addRect(Rect.fromLTRB(
+          0, 0, getWidthFromPercentage(60), getHeightFromPercentage(13)));
+    border.addPath(spaceBeforeHead, Offset(getWidthFromPercentage(5), 0));
 
-    // border at left hand bottom
-    border.addPath(leftLeg, Offset(width / 42, 0));
-    // border at right hand bottom
-    border.addPath(leftLeg, Offset(width - 10, 0));
+    Path spaceUnderHands = Path()
+      ..addRect(Rect.fromLTRB(
+          0, 0, getWidthFromPercentage(60), getHeightFromPercentage(80)));
 
-    Path leftHand = Path()
-      ..addRect(Rect.fromLTRB(width / 40, 0, width / 4.1, height / 4.5));
-
-    // left hand
-    border.addPath(leftHand, Offset(width / 7, 0));
-
-    // right hand
-    border.addPath(leftHand, Offset(width / 1.708, 0));
-
-    Path hatCut = Path()
-      ..addPolygon([
-        Offset(width / 2 - width / 8, 0),
-        Offset(width / 2 + width / 9, 0),
-        Offset(width / 2 + width / 9, height / 9),
-        Offset(width / 2 - width / 8, height / 9),
-      ], true);
-    border.addPath(hatCut, Offset(0, 0));
-
-    Path centerCut = Path()
-      ..addPolygon([
-        Offset(width / 2 - width / 9, height / 2),
-        Offset(width / 2 + width / 9, height / 2),
-        Offset(width / 2, height / 2 - height / 2.5),
-      ], true);
-    border.addPath(centerCut, Offset(0, height / 2.3));
+    border.addPath(spaceUnderHands,
+        Offset(getWidthFromPercentage(5), getHeightFromPercentage(22)));
 
     return border;
   }
 
   @override
   bool shouldReclip(CustomClipper<Path> oldClipper) => true;
+
+  double getWidthFromPercentage(int percentage) {
+    double width = MediaQuery.of(context).size.width;
+    return percentage * width / 100;
+  }
+
+  double getHeightFromPercentage(int percentage) {
+    double height = MediaQuery.of(context).size.height;
+    return percentage * height / 100;
+  }
 }

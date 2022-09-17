@@ -8,7 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:circular_countdown_timer/circular_countdown_timer.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:http/http.dart';
+// import 'package:http/http.dart';
 import 'package:path/path.dart';
 import 'package:point_plotter/camera_utils.dart';
 import 'package:point_plotter/right_side_camera.dart';
@@ -21,7 +21,7 @@ class CameraPage extends StatefulWidget {
 class _CameraPageState extends State<CameraPage> {
   String focalLength = "";
   CountDownController _controller = CountDownController();
-  int _duration = 20;
+  int _duration = 2;
   XFile imageFile;
 
   bool _fileUploading = false;
