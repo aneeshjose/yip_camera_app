@@ -81,7 +81,7 @@ class _SignUpState extends State<SignUp> {
                     },
                   ),
                 ),
-                RaisedButton(
+                ElevatedButton(
                   // passing an additional context parameter to show dialog boxs
                   onPressed: () async {
                     // try{
@@ -104,14 +104,14 @@ class _SignUpState extends State<SignUp> {
                       _showMessage(e);
                     }
                   },
-                  color: Colors.black87,
-                  textColor: Colors.white,
+                  // color: Colors.black87,
+                  // textColor: Colors.white,
                   child: Text(
                     "Sign Up",
                   ),
                 ),
 
-                FlatButton(
+                TextButton(
                   // passing an additional context parameter to show dialog boxs
                   onPressed: () {
                     Navigator.pushReplacement(
@@ -120,7 +120,7 @@ class _SignUpState extends State<SignUp> {
                           builder: (context) => LoginScreen(),
                         ));
                   },
-                  textColor: Colors.blueGrey,
+                  // textColor: Colors.blueGrey,
                   child: Text(
                     "Sign In Here",
                   ),

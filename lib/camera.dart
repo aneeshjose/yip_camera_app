@@ -21,31 +21,37 @@ class CameraPage extends StatefulWidget {
 class _CameraPageState extends State<CameraPage> {
   String focalLength = "";
   CountDownController _controller = CountDownController();
-  int _duration = 2;
+  int _duration = 0;
   XFile imageFile;
 
+  bool cameraControllerDisposed = false;
   bool _fileUploading = false;
+  CameraController controller;
 
   @override
   void initState() {
     super.initState();
     controller = CameraController(cameras[1], ResolutionPreset.max);
-    controller.initialize().then((_) {
+    controller.addListener(() {
       if (!mounted) {
         return;
       }
       setState(() {});
     });
+    controller.initialize();
   }
 
   @override
   void dispose() {
-    controller.dispose();
+    controller?.dispose();
+    print("Dispose camera.dart");
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    print("Camera01");
+    print("--------------------------");
     if (!controller.value.isInitialized) {
       return Container();
     }
@@ -170,24 +176,27 @@ class _CameraPageState extends State<CameraPage> {
     if (imageFile == null) return;
     final fileName = basename(imageFile.path);
     File file = File(imageFile.path);
-    final destination =
-        '${FirebaseAuth.instance.currentUser?.uid ?? DateTime.now().millisecondsSinceEpoch}/$fileName';
-    setState(() {
-      _fileUploading = true;
-    });
+    //////////////////
+    // final destination =
+    //     '${FirebaseAuth.instance.currentUser?.uid ?? DateTime.now().millisecondsSinceEpoch}/$fileName';
+    // setState(() {
+    //   _fileUploading = true;
+    // });
 
-    var snapshot = await FirebaseStorage.instance
-        .ref()
-        .child(destination)
-        .putFile(file)
-        .whenComplete(() => print('hello'));
+    // var snapshot = await FirebaseStorage.instance
+    //     .ref()
+    //     .child(destination)
+    //     .putFile(file)
+    //     .whenComplete(() => print('hello'));
 
-    String downloadUrl = await snapshot.ref.getDownloadURL();
+    // String downloadUrl = await snapshot.ref.getDownloadURL();
 
-    await FirebaseFirestore.instance.collection('Images').add({
-      'userid': FirebaseAuth.instance.currentUser?.uid,
-      'url': downloadUrl,
-    });
+    // await FirebaseFirestore.instance.collection('Images').add({
+    //   'userid': FirebaseAuth.instance.currentUser?.uid,
+    //   'url': downloadUrl,
+    // });
+
+    // ////////
     // downloadUrl =
     //     'https://firebasestorage.googleapis.com/v0/b/size-me.appspot.com/o/sample3.jpg?alt=media&token=3ad2fd3b-a70f-409d-93c0-469a0f7b366c';
     // Response resp = await post(Uri.parse('http://35.193.86.253:5000'),

@@ -9,6 +9,7 @@ import 'package:circular_countdown_timer/circular_countdown_timer.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:path/path.dart';
 import 'package:point_plotter/camera_utils.dart';
+import 'package:point_plotter/left_side_camera.dart';
 
 class RightCamera extends StatefulWidget {
   @override
@@ -18,7 +19,8 @@ class RightCamera extends StatefulWidget {
 class _RightCameraState extends State<RightCamera> {
   String focalLength = "";
   CountDownController _controller = CountDownController();
-  int _duration = 1;
+  CameraController controller;
+  int _duration = 2;
   XFile imageFile;
 
   bool _fileUploading = false;
@@ -26,25 +28,27 @@ class _RightCameraState extends State<RightCamera> {
   @override
   void initState() {
     super.initState();
-    rightSideCameraController =
-        CameraController(cameras[1], ResolutionPreset.max);
-    rightSideCameraController.initialize().then((_) {
+    controller = CameraController(cameras[1], ResolutionPreset.max);
+    controller.addListener(() {
       if (!mounted) {
         return;
       }
       setState(() {});
     });
+    controller.initialize();
   }
 
   @override
   void dispose() {
-    rightSideCameraController.dispose();
+    controller?.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (!rightSideCameraController.value.isInitialized) {
+    print("Camera02");
+    print("--------------------------");
+    if (!controller.value.isInitialized) {
       return Container();
     }
 
@@ -58,7 +62,7 @@ class _RightCameraState extends State<RightCamera> {
                 clipBehavior: Clip.antiAlias,
                 children: [
                   CameraPreview(
-                    rightSideCameraController,
+                    controller,
                     child: ClipPath(
                       clipper: MyCustomClipper(context),
                       child: Opacity(
@@ -159,7 +163,7 @@ class _RightCameraState extends State<RightCamera> {
   }
 
   Future<XFile> takePicture() async {
-    final CameraController cameraController = rightSideCameraController;
+    final CameraController cameraController = controller;
     if (cameraController == null || !cameraController.value.isInitialized) {
       return null;
     }
@@ -169,7 +173,7 @@ class _RightCameraState extends State<RightCamera> {
     }
 
     try {
-      XFile file = await cameraController.takePicture();
+      XFile file = await cameraController?.takePicture();
       return file;
     } on CameraException catch (_) {
       return null;
@@ -201,14 +205,15 @@ class _RightCameraState extends State<RightCamera> {
 
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(
-        "Uploaded successfully. Now turn to right",
+        "Uploaded successfully. Now turn to left",
       ),
     ));
 
     setState(() {
       _fileUploading = false;
     });
-    Navigator.pop(context);
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => LeftCamera()));
   }
 }
 

@@ -18,17 +18,17 @@ class LeftCamera extends StatefulWidget {
 class LeftCameraState extends State<LeftCamera> {
   String focalLength = "";
   CountDownController _controller = CountDownController();
-  int _duration = 1;
+  int _duration = 2;
   XFile imageFile;
+  CameraController controller;
 
   bool _fileUploading = false;
 
   @override
   void initState() {
     super.initState();
-    rightSideCameraController =
-        CameraController(cameras[1], ResolutionPreset.max);
-    rightSideCameraController.initialize().then((_) {
+    controller = CameraController(cameras[1], ResolutionPreset.max);
+    controller.initialize().then((_) {
       if (!mounted) {
         return;
       }
@@ -38,13 +38,17 @@ class LeftCameraState extends State<LeftCamera> {
 
   @override
   void dispose() {
-    rightSideCameraController.dispose();
+    controller?.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (!rightSideCameraController.value.isInitialized) {
+    if (!controller.value.isInitialized) {
+      return Container();
+    }
+
+    if (controller == null) {
       return Container();
     }
 
@@ -58,7 +62,7 @@ class LeftCameraState extends State<LeftCamera> {
                 clipBehavior: Clip.antiAlias,
                 children: [
                   CameraPreview(
-                    rightSideCameraController,
+                    controller,
                     child: ClipPath(
                       clipper: MyCustomClipper(context),
                       child: Opacity(
@@ -159,7 +163,7 @@ class LeftCameraState extends State<LeftCamera> {
   }
 
   Future<XFile> takePicture() async {
-    final CameraController cameraController = rightSideCameraController;
+    final CameraController cameraController = controller;
     if (cameraController == null || !cameraController.value.isInitialized) {
       return null;
     }
@@ -201,7 +205,7 @@ class LeftCameraState extends State<LeftCamera> {
 
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(
-        "Uploaded successfully. Now turn to right",
+        "Uploaded successfully. Please wait at the Home Page while we process the images",
       ),
     ));
 
