@@ -18,11 +18,36 @@ class CameraPage extends StatefulWidget {
   _CameraPageState createState() => _CameraPageState();
 }
 
+class CameraType {}
+
+class FrontSideCamera extends CameraType {
+  @override
+  String toString() {
+    return 'front';
+  }
+}
+
+class RightSideCamera extends CameraType {
+  @override
+  String toString() {
+    return 'right';
+  }
+}
+
+class LeftSideCamera extends CameraType {
+  @override
+  String toString() {
+    return 'left';
+  }
+}
+
 class _CameraPageState extends State<CameraPage> {
   String focalLength = "";
   CountDownController _controller = CountDownController();
   int _duration = 0;
   XFile imageFile;
+
+  CameraType cameraType = FrontSideCamera();
 
   bool cameraControllerDisposed = false;
   bool _fileUploading = false;
@@ -68,7 +93,13 @@ class _CameraPageState extends State<CameraPage> {
                   CameraPreview(
                     controller,
                     child: ClipPath(
-                      clipper: MyCustomClipper(context),
+                      clipper: cameraType is FrontSideCamera
+                          ? MyCustomClipper(context)
+                          : cameraType is RightSideCamera
+                              ? RightSideClipper(context)
+                              : cameraType is LeftSideCamera
+                                  ? LeftSideClipper(context)
+                                  : MyCustomClipper(context),
                       child: Opacity(
                         opacity: 0.7,
                         child: Container(
@@ -176,27 +207,27 @@ class _CameraPageState extends State<CameraPage> {
     if (imageFile == null) return;
     final fileName = basename(imageFile.path);
     File file = File(imageFile.path);
-    //////////////////
-    // final destination =
-    //     '${FirebaseAuth.instance.currentUser?.uid ?? DateTime.now().millisecondsSinceEpoch}/$fileName';
-    // setState(() {
-    //   _fileUploading = true;
-    // });
 
-    // var snapshot = await FirebaseStorage.instance
-    //     .ref()
-    //     .child(destination)
-    //     .putFile(file)
-    //     .whenComplete(() => print('hello'));
+    final destination =
+        '${FirebaseAuth.instance.currentUser?.uid ?? DateTime.now().millisecondsSinceEpoch}/$fileName';
+    setState(() {
+      _fileUploading = true;
+    });
 
-    // String downloadUrl = await snapshot.ref.getDownloadURL();
+    var snapshot = await FirebaseStorage.instance
+        .ref()
+        .child(destination)
+        .putFile(file)
+        .whenComplete(() => print('hello'));
 
-    // await FirebaseFirestore.instance.collection('Images').add({
-    //   'userid': FirebaseAuth.instance.currentUser?.uid,
-    //   'url': downloadUrl,
-    // });
+    String downloadUrl = await snapshot.ref.getDownloadURL();
 
-    // ////////
+    await FirebaseFirestore.instance.collection('Images').add({
+      'userid': FirebaseAuth.instance.currentUser?.uid,
+      'url': downloadUrl,
+      'side': cameraType.toString(),
+    });
+
     // downloadUrl =
     //     'https://firebasestorage.googleapis.com/v0/b/size-me.appspot.com/o/sample3.jpg?alt=media&token=3ad2fd3b-a70f-409d-93c0-469a0f7b366c';
     // Response resp = await post(Uri.parse('http://35.193.86.253:5000'),
@@ -227,17 +258,31 @@ class _CameraPageState extends State<CameraPage> {
     //   ),
     // ));
 
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text(
-        "Uploaded successfully. Now turn to right",
-      ),
-    ));
+    if (cameraType is LeftSideCamera) {
+      Navigator.pop(context);
+    }
+
+    if (cameraType is FrontSideCamera) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(
+          "Uploaded successfully. Now turn to right",
+        ),
+      ));
+      cameraType = RightSideCamera();
+    } else if (cameraType is RightSideCamera) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(
+          "Uploaded successfully. Now turn to left",
+        ),
+      ));
+      cameraType = LeftSideCamera();
+    }
 
     setState(() {
       _fileUploading = false;
     });
-    Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => RightCamera()));
+    // Navigator.pushReplacement(
+    //     context, MaterialPageRoute(builder: (context) => RightCamera()));
   }
 }
 
@@ -296,4 +341,91 @@ class MyCustomClipper extends CustomClipper<Path> {
 
   @override
   bool shouldReclip(CustomClipper<Path> oldClipper) => true;
+}
+
+class RightSideClipper extends CustomClipper<Path> {
+  final BuildContext context;
+  RightSideClipper(this.context);
+
+  @override
+  Path getClip(Size size) {
+    Path border;
+
+    // left border
+    border = Path()
+      ..addRect(Rect.fromLTRB(
+          0, 0, getWidthFromPercentage(5), getHeightFromPercentage(100)));
+    // right border
+    border.addPath(border, Offset(getWidthFromPercentage(95), 0));
+
+    Path spaceBeforeHead = Path()
+      ..addRect(Rect.fromLTRB(
+          0, 0, getWidthFromPercentage(60), getHeightFromPercentage(13)));
+    border.addPath(spaceBeforeHead, Offset(getWidthFromPercentage(5), 0));
+
+    Path spaceUnderHands = Path()
+      ..addRect(Rect.fromLTRB(
+          0, 0, getWidthFromPercentage(60), getHeightFromPercentage(80)));
+
+    border.addPath(spaceUnderHands,
+        Offset(getWidthFromPercentage(5), getHeightFromPercentage(22)));
+
+    return border;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) => true;
+
+  double getWidthFromPercentage(int percentage) {
+    double width = MediaQuery.of(context).size.width;
+    return percentage * width / 100;
+  }
+
+  double getHeightFromPercentage(int percentage) {
+    double height = MediaQuery.of(context).size.height;
+    return percentage * height / 100;
+  }
+}
+
+class LeftSideClipper extends CustomClipper<Path> {
+  final BuildContext context;
+  LeftSideClipper(this.context);
+
+  @override
+  Path getClip(Size size) {
+    Path border;
+
+    // left border
+    border = Path()
+      ..addRect(Rect.fromLTRB(
+          0, 0, getWidthFromPercentage(5), getHeightFromPercentage(100)));
+    // right border
+    border.addPath(border, Offset(getWidthFromPercentage(95), 0));
+
+    Path spaceBeforeHead = Path()
+      ..addRect(Rect.fromLTRB(
+          getWidthFromPercentage(60), getHeightFromPercentage(13), 0, 0));
+    border.addPath(spaceBeforeHead, Offset(getWidthFromPercentage(40), 0));
+
+    Path spaceUnderHands = Path()
+      ..addRect(Rect.fromLTRB(
+          getWidthFromPercentage(60), getHeightFromPercentage(80), 0, 0));
+    border.addPath(spaceUnderHands,
+        Offset(getWidthFromPercentage(40), getHeightFromPercentage(22)));
+
+    return border;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) => true;
+
+  double getWidthFromPercentage(int percentage) {
+    double width = MediaQuery.of(context).size.width;
+    return percentage * width / 100;
+  }
+
+  double getHeightFromPercentage(int percentage) {
+    double height = MediaQuery.of(context).size.height;
+    return percentage * height / 100;
+  }
 }
