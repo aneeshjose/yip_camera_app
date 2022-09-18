@@ -44,7 +44,7 @@ class LeftSideCamera extends CameraType {
 class _CameraPageState extends State<CameraPage> {
   String focalLength = "";
   CountDownController _controller = CountDownController();
-  int _duration = 0;
+  int _duration = 5;
   XFile imageFile;
 
   CameraType cameraType = FrontSideCamera();
@@ -69,14 +69,11 @@ class _CameraPageState extends State<CameraPage> {
   @override
   void dispose() {
     controller?.dispose();
-    print("Dispose camera.dart");
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    print("Camera01");
-    print("--------------------------");
     if (!controller.value.isInitialized) {
       return Container();
     }
@@ -173,14 +170,16 @@ class _CameraPageState extends State<CameraPage> {
                   ),
                 ],
               ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () => _controller.start(),
-          backgroundColor: Colors.white,
-          child: Text(
-            'Start',
-            style: TextStyle(color: Colors.black87),
-          ),
-        ),
+        floatingActionButton: _fileUploading
+            ? null
+            : FloatingActionButton(
+                onPressed: () => _controller.start(),
+                backgroundColor: Colors.white,
+                child: Text(
+                  'Start',
+                  style: TextStyle(color: Colors.black87),
+                ),
+              ),
       ),
     );
   }
@@ -218,7 +217,7 @@ class _CameraPageState extends State<CameraPage> {
         .ref()
         .child(destination)
         .putFile(file)
-        .whenComplete(() => print('hello'));
+        .whenComplete(() => print("uploaded file"));
 
     String downloadUrl = await snapshot.ref.getDownloadURL();
 

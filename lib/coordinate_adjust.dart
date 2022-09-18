@@ -79,8 +79,6 @@ class _CoordinatePlotterState extends State<CoordinatePlotter> {
                 2;
             leftPadding = aWidth + MediaQuery.of(context).padding.left;
 
-            print("Max: ${constraints.maxWidth} \n LeftPadding: $leftPadding");
-
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -93,11 +91,13 @@ class _CoordinatePlotterState extends State<CoordinatePlotter> {
                         color: Colors.yellow[200],
                         child: _coordinateDetails == null
                             ? Container()
-                            : CachedNetworkImage(
-                                imageUrl: widget.url,
-                                width: constraints.maxWidth,
-                                // fit: BoxFit.fill,
-                              ),
+                            : widget.url.isEmpty
+                                ? Container()
+                                : CachedNetworkImage(
+                                    imageUrl: widget.url,
+                                    width: constraints.maxWidth,
+                                    // fit: BoxFit.fill,
+                                  ),
                       ),
                     ),
                     if (_coordinates != null)
