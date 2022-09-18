@@ -32,7 +32,7 @@ class _CoordinatePlotterState extends State<CoordinatePlotter> {
   @override
   void initState() {
     super.initState();
-    _fetchCoordinate();
+    _fetchCoordinateMock();
     // coordinates();
   }
 
@@ -209,6 +209,29 @@ class _CoordinatePlotterState extends State<CoordinatePlotter> {
         .then((value) => setState(() {
               _coordinateDetails = value.docs[0].data();
               _coordinateDetails['docid'] = value.docs[0].id;
+              Map<String, dynamic> data =
+                  Map<String, dynamic>.from(_coordinateDetails['coordinates']);
+              print(data);
+              _coordinates = Map<num, List<num>>();
+              data.forEach((key, value) {
+                _coordinates[int.parse(key)] = List<num>.from(value);
+              });
+              // _coordinates = Map<String, List<num>>.from(
+              //     _coordinateDetails['coordinates']);
+              _pixels = _coordinateDetails['height_pixels'];
+              _width = _coordinateDetails['width'].toDouble();
+              _height = _coordinateDetails['height'].toDouble();
+            }));
+  }
+
+  void _fetchCoordinateMock() {
+    FirebaseFirestore.instance
+        .collection('coordinates')
+        .doc('FRJD7tpOENIqRx8oUodK')
+        .get()
+        .then((value) => setState(() {
+              _coordinateDetails = value.data();
+              _coordinateDetails['docid'] = value.id;
               Map<String, dynamic> data =
                   Map<String, dynamic>.from(_coordinateDetails['coordinates']);
               print(data);

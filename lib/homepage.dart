@@ -41,37 +41,45 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ),
-      body: (_userResults != null && _userResults.length == 0)
-          ? Center(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  'You haven\'t uploaded any photos yet or are awaiting to get processed',
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            )
-          : ListView.builder(
-              itemBuilder: (context, index) {
-                return GestureDetector(
-                  onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => CoordinatePlotter(
-                              url: _userResults[index].data()['url']))),
-                  child: SizedBox(
-                    height: MediaQuery.of(context).size.width,
-                    width: MediaQuery.of(context).size.width,
-                    child: Card(
-                      child: CachedNetworkImage(
-                        imageUrl: _userResults[index].data()['url'],
-                      ),
-                    ),
-                  ),
-                );
-              },
-              itemCount: _userResults?.length ?? 0,
-            ),
+      // body: (_userResults != null && _userResults.length == 0)
+      //     ? Center(
+      //         child: Padding(
+      //           padding: const EdgeInsets.all(8.0),
+      //           child: Text(
+      //             'You haven\'t uploaded any photos yet or are awaiting to get processed',
+      //             textAlign: TextAlign.center,
+      //           ),
+      //         ),
+      //       )
+      //     : ListView.builder(
+      //         itemBuilder: (context, index) {
+      //           return GestureDetector(
+      //             onTap: () => Navigator.push(
+      //                 context,
+      //                 MaterialPageRoute(
+      //                     builder: (context) => CoordinatePlotter(
+      //                         url: _userResults[index].data()['url']))),
+      //             child: SizedBox(
+      //               height: MediaQuery.of(context).size.width,
+      //               width: MediaQuery.of(context).size.width,
+      //               child: Card(
+      //                 child: CachedNetworkImage(
+      //                   imageUrl: _userResults[index].data()['url'],
+      //                 ),
+      //               ),
+      //             ),
+      //           );
+      //         },
+      //         itemCount: _userResults?.length ?? 0,
+      //       ),
+      body: Column(children: [
+        ElevatedButton(
+            onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => CoordinatePlotter(url: ''))),
+            child: Text('Adjust'))
+      ]),
     );
   }
 
